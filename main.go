@@ -17,6 +17,7 @@ import (
 
 )
 
+
 func sendSMS() {
         client := twilio.NewRestClient()
         paramsAPI := openapi.CreateMessageParams{}
@@ -145,7 +146,7 @@ func recv() {
             <-forever
 }
 
-func emitExit() {
+func generateExit() {
         conn, err := amqp.Dial("amqp://"+os.Getenv("CREDS")+"@biggest.dumpster.world:5672/")
         failOnError(err, "Failed to connect to RabbitMQ")
         defer conn.Close()
@@ -180,7 +181,7 @@ func emitExit() {
         log.Printf(" [x] Sent %s", body)
 }
 
-func emit(mess string) {
+func generate(mess string) {
         conn, err := amqp.Dial("amqp://"+os.Getenv("CREDS")+"@biggest.dumpster.world:5672/")
         failOnError(err, "Failed to connect to RabbitMQ")
         defer conn.Close()
@@ -238,7 +239,7 @@ func severityFrom(args []string) string {
 
 
 func main() {
-
-    recv()
+    //prepare for qt!
+    //recv()
 
 }
