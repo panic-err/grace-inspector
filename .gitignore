@@ -1,0 +1,5 @@
+gomess
+go.mod
+go.sum
+*.kate-swp
+CREDS
