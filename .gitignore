@@ -1,5 +1,7 @@
 rocket-write
 go.mod
 go.sum
+*swp
 *.kate-swp
 CREDS
+vendor
