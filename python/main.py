@@ -26,12 +26,14 @@ class Hallo(QWidget):
         self.layout = QVBoxLayout(self)
         for i in range(28):
             button = QPushButton(str(i))
+            button.position = i
             self.layout.add_widget(button)
             button.clicked.connect(self.greet)
             self.buttons.append(button)
     @Slot()
     def greet(self):
-        print(self)
+        butt = self.focus_widget()
+        print(butt.position)
         #self.message.text = random.choice(self.hello)
 
 if __name__ == "__main__":
