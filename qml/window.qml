@@ -12,6 +12,9 @@ Window {
 
     ColumnLayout{
         Button {
+            onClicked: {
+                    console.log("Click!")
+            }
             height:50
             width:200
             visible: true

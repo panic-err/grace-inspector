@@ -5,7 +5,6 @@ print(PySide6.__version__)
 import random
 import sys
 import os
-
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QUrl, Qt, Slot
 from PySide6.QtWidgets import (QApplication, QLabel, QPushButton, QVBoxLayout, QWidget)
@@ -30,11 +29,17 @@ class Hallo(QWidget):
             self.layout.add_widget(button)
             button.clicked.connect(self.greet)
             self.buttons.append(button)
+
     @Slot()
     def greet(self):
         butt = self.focus_widget()
         print(butt.position)
+
+    @Slot()
+    def boop():
+        print("boop")
         #self.message.text = random.choice(self.hello)
+
 
 if __name__ == "__main__":
     app = QApplication([])
@@ -45,6 +50,7 @@ if __name__ == "__main__":
     button_file_path = "../qml/button.qml"
     buttons = engine.load(button_file_path)
     widget = Hallo()
+
     widget.show()
     
     sys.exit(app.exec())
