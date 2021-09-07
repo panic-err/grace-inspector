@@ -12,6 +12,7 @@ Window {
 
     ColumnLayout{
         Button {
+            objectName:"Butt0"
             onClicked: {
                     console.log("Click!")
             }
