@@ -13,7 +13,6 @@ from __feature__ import snake_case, true_property
 class Hallo(QWidget):
     def __init__(self):
         QWidget.__init__(self)
-
         self.hello =  [
                 "hallo",
                 "hi",
@@ -49,17 +48,14 @@ if __name__ == "__main__":
     app = QApplication([])
     #QtWebEngine.initialize()
     engine = QQmlApplicationEngine()
-    ctx = engine.root_context()
-    ctx.set_context_property("report", Hallo().boop)
 
     qml_file_path = "../qml/window.qml"
     motor = engine.load(qml_file_path)
     button_file_path = "../qml/button.qml"
     buttons = engine.load(button_file_path)
     widget = Hallo()
-    component = QQmlComponent()
     print(widget.buttons)
-    print(ctx)
     print(engine)
+    #widget.layout.setStyleSheet("width: 450;height:550;")
     widget.show()
     sys.exit(app.exec())
