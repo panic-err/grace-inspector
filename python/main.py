@@ -40,10 +40,10 @@ if __name__ == "__main__":
     app = QApplication([])
     #QtWebEngine.initialize()
     engine = QQmlApplicationEngine()
-    qml_file_path = "../qml/button.qml"
-    qml_url = qml_file_path
-    QUrl.from_local_file(os.path.abspath(qml_file_path))
-    motor = engine.load(qml_url)
+    qml_file_path = "../qml/window.qml"
+    motor = engine.load(qml_file_path)
+    button_file_path = "../qml/button.qml"
+    buttons = engine.load(button_file_path)
     widget = Hallo()
     widget.show()
     
