@@ -15,8 +15,8 @@ gomess, rocket-write. Supercut works on its own as a standalone web server
 albeit simplified. Gomess interacts with the database and will probably
 get forked after or during writing this.
 
-
-
 You can text supercut now and supercut can text back thanks to gomess
 and twilio. So the next layer to my app ecosystem is going to be messaging
 the desktop from my phone and vice-versa
+
+
