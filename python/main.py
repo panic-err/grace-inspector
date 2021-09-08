@@ -7,7 +7,7 @@ import sys
 import os
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
-from PySide6.QtWidgets import (QApplication, QLabel, QPushButton, QGridLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QLineEdit, QLabel, QPushButton, QGridLayout, QWidget)
 from __feature__ import snake_case, true_property
 
 class Hallo(QWidget):
@@ -26,7 +26,7 @@ class Hallo(QWidget):
 	
         self.layout = QGridLayout(self)
         for i in range(28):
-            mess = QPushButton("Messages!")
+            mess = QLineEdit("Messages!")
             self.layout.add_widget(mess, i, 0)
             button = QPushButton(str(i))
             button.position = i
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     button_file_path = "../qml/button.qml"
     buttons = engine.load(button_file_path)"""
     widget = Hallo()
-    print(widget.buttons)
+    #print(widget.buttons)
     #print(engine)
     #widget.layout.setStyleSheet("width: 450;height:550;")
     widget.show()
