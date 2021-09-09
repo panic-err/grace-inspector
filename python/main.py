@@ -5,9 +5,10 @@ print(PySide6.__version__)
 import random
 import sys
 import os
+from PySide6.QtQuick import QQuickWindow
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
-from PySide6.QtWidgets import (QApplication, QLineEdit, QLabel, QPushButton, QGridLayout, QWidget)
+from PySide6.QtWidgets import (QWidget, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
 from __feature__ import snake_case, true_property
 
 class Hallo(QWidget):
@@ -22,13 +23,15 @@ class Hallo(QWidget):
         self.buttons = []
 
         self.resize(1000, 550)
-        
-	
         self.layout = QGridLayout(self)
+        #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
+        #self.layout = QGridLayout(self)
         for i in range(28):
             mess = QLineEdit("Messages!")
+            mess.setStyleSheet("color:aqua;")
             self.layout.add_widget(mess, i, 0)
             button = QPushButton(str(i))
+            button.setStyleSheet("color:orange;")
             button.position = i
             self.layout.add_widget(button, i, 1)
             button.clicked.connect(self.greet)
