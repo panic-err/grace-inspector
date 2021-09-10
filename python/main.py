@@ -8,7 +8,7 @@ import os
 from PySide6.QtQuick import QQuickWindow
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
-from PySide6.QtWidgets import (QWidget, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
+from PySide6.QtWidgets import (QWidget, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
 from __feature__ import snake_case, true_property
 
 class Hallo(QWidget):
@@ -40,12 +40,20 @@ class Hallo(QWidget):
             button.clicked.connect(self.greet)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
+            self.nameDetail = QDialog()
+            self.nameDetailLayout = QVBoxLayout(self.nameDetail)
+            nameDetail = "Details"
+            labelDetail = QLabel(nameDetail)
+            self.nameDetailLayout.add_widget(labelDetail)
     @Property(QWidget)
     def buttonList():
         return self.buttons
     @Slot()
     def greet(self):
         butt = self.focus_widget()
+        self.nameDetail.resize(450, 500)
+        self.nameDetail.setStyleSheet("color:pink;")
+        self.nameDetail.show()
         print(butt.position)
     @Slot()
     def boop():
