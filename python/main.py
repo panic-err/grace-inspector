@@ -22,6 +22,7 @@ class Hallo(QWidget):
         channel = connection.channel()
         channel.exchange_declare( exchange='topic_logs')
         message = self.greeters[self.position].text
+        print("[x] Sent %r:%r"%(self.routing_key, message))
         #message = 'trout'
         channel.basic_publish(exchange='topic_logs', routing_key=self.routing_key, body=message)
         print("[x] Sent %r:%r" %(self.routing_key, self.message) )
@@ -83,6 +84,7 @@ class Hallo(QWidget):
         self.nameDetail.resize(450, 500)
         self.nameDetail.setStyleSheet("color:pink;")
         self.nameDetail.show()
+        self.emission()
         print(self.greeters[butt.position].text)
         print(butt.position)
     @Slot()
