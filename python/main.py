@@ -2,6 +2,9 @@ import PySide6
 
 print(PySide6.__version__)
 
+import pika
+import sys
+
 import random
 import sys
 import os
@@ -10,6 +13,27 @@ from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
 from PySide6.QtWidgets import (QWidget, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
 from __feature__ import snake_case, true_property
+
+class EmQue():
+    def run(self):
+        connection = pika.BlockingConnection(pika.ConnnectionParameters(host='weasel:1joker@biggest.dumpster.world'))
+        channel = connection.channel()
+        channel.exchange_declare(exchange_type('topic'), exchange='topic_logs')
+        message = 'trout'
+        channel.basic_publish(exchange='topic_logs', routing_key=self.routing_key, body=message)
+        print("[x] Sent %r:%r" %(routing_key, self.message) )
+        connection.close()
+
+    def __init__(self):
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='weasel:1joker@biggest.dumpster.world'))
+        channel = connection.channel()
+        channel.exchange_declare(exchange_type('topic'), exchange='topic_logs')
+
+        self.routing_key = sys.argv[1] if len(sys.argv) > 2 else 'trout.*'
+        self.message = 'Hallo'
+        channel.basic_publish(exchange='topic_logs', routing_key=self.routing_key, body=self.message)
+        print("[x] Sent %r:%r" % (routing_key, self.message))
+        connection.close()
 
 class Hallo(QWidget):
     def __init__(self):
