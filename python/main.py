@@ -14,32 +14,31 @@ from PySide6.QtCore import QUrl, Qt, Slot, Property
 from PySide6.QtWidgets import (QWidget, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
 from __feature__ import snake_case, true_property
 
-class EmQue():
+class Hallo(QWidget):
     def emission(self):
-        creds = pika.PlainCredentials('weasel', '1joker')
+        creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
        
-        connection = pika.BlockingConnection(pika.ConnnectionParameters('biggest.dumpster.world', 5672))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
         channel = connection.channel()
-        channel.exchange_declare(exchange_type('topic'), exchange='topic_logs')
-        message = 'trout'
+        channel.exchange_declare( exchange='topic_logs')
+        message = self.greeters[self.position].text
+        #message = 'trout'
         channel.basic_publish(exchange='topic_logs', routing_key=self.routing_key, body=message)
-        print("[x] Sent %r:%r" %(routing_key, self.message) )
+        print("[x] Sent %r:%r" %(self.routing_key, self.message) )
         connection.close()
 
     def __init__(self):
-        creds = pika.PlainCredentials('weasel', '1joker')
-        connection = pika.BlockingConnection(pika.ConnectionParameters('biggest.dumpster.world', 5672, '/', creds))
+        creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
+        connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
         channel = connection.channel()
         channel.exchange_declare(exchange='topic_logs')
 
         self.routing_key = 'trout'
-        self.message = 'Hallo'
+        self.message = 'init'
         channel.basic_publish(exchange='topic_logs', routing_key=self.routing_key, body=self.message)
         print("[x] Sent %r:%r" % (self.routing_key, self.message))
         connection.close()
 
-class Hallo(QWidget):
-    def __init__(self):
         QWidget.__init__(self)
         self.hello =  [
                 "hallo",
@@ -48,13 +47,14 @@ class Hallo(QWidget):
                 ]
 
         self.buttons = []
-
+        self.greeters = []
         self.resize(1000, 550)
         self.layout = QGridLayout(self)
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(28):
             mess = QLineEdit("Messages!")
+            self.greeters.append(mess)
             mess.setStyleSheet("color:aqua;")
             self.layout.add_widget(mess, i, 0)
             nameButton = QPushButton("NAME")
@@ -62,6 +62,7 @@ class Hallo(QWidget):
             self.layout.add_widget(nameButton, i, 1)
             button = QPushButton(str(i))
             button.setStyleSheet("color:orange;")
+            self.position = i
             button.position = i
             self.layout.add_widget(button, i, 2)
             button.clicked.connect(self.greet)
@@ -70,7 +71,8 @@ class Hallo(QWidget):
             self.nameDetail = QDialog()
             self.nameDetailLayout = QVBoxLayout(self.nameDetail)
             nameDetail = "Details"
-            labelDetail = QLabel(nameDetail)
+            labelDetail = QPushButton(nameDetail)
+            labelDetail.clicked.connect(self.emission)
             self.nameDetailLayout.add_widget(labelDetail)
     @Property(QWidget)
     def buttonList():
@@ -81,6 +83,7 @@ class Hallo(QWidget):
         self.nameDetail.resize(450, 500)
         self.nameDetail.setStyleSheet("color:pink;")
         self.nameDetail.show()
+        print(self.greeters[butt.position].text)
         print(butt.position)
     @Slot()
     def boop():
@@ -98,7 +101,7 @@ if __name__ == "__main__":
     button_file_path = "../qml/button.qml"
     buttons = engine.load(button_file_path)"""
     widget = Hallo()
-    messenger = EmQue()
+
     #print(widget.buttons)
     #print(engine)
     #widget.layout.setStyleSheet("width: 450;height:550;")
