@@ -15,8 +15,10 @@ from PySide6.QtWidgets import (QWidget, QDialog, QVBoxLayout, QApplication, QLin
 from __feature__ import snake_case, true_property
 
 class EmQue():
-    def run(self):
-        connection = pika.BlockingConnection(pika.ConnnectionParameters(host='weasel:1joker@biggest.dumpster.world'))
+    def emission(self):
+        creds = pika.PlainCredentials('weasel', '1joker')
+       
+        connection = pika.BlockingConnection(pika.ConnnectionParameters('biggest.dumpster.world', 5672))
         channel = connection.channel()
         channel.exchange_declare(exchange_type('topic'), exchange='topic_logs')
         message = 'trout'
@@ -25,14 +27,15 @@ class EmQue():
         connection.close()
 
     def __init__(self):
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='weasel:1joker@biggest.dumpster.world'))
+        creds = pika.PlainCredentials('weasel', '1joker')
+        connection = pika.BlockingConnection(pika.ConnectionParameters('biggest.dumpster.world', 5672, '/', creds))
         channel = connection.channel()
-        channel.exchange_declare(exchange_type('topic'), exchange='topic_logs')
+        channel.exchange_declare(exchange='topic_logs')
 
-        self.routing_key = sys.argv[1] if len(sys.argv) > 2 else 'trout.*'
+        self.routing_key = 'trout'
         self.message = 'Hallo'
         channel.basic_publish(exchange='topic_logs', routing_key=self.routing_key, body=self.message)
-        print("[x] Sent %r:%r" % (routing_key, self.message))
+        print("[x] Sent %r:%r" % (self.routing_key, self.message))
         connection.close()
 
 class Hallo(QWidget):
@@ -95,6 +98,7 @@ if __name__ == "__main__":
     button_file_path = "../qml/button.qml"
     buttons = engine.load(button_file_path)"""
     widget = Hallo()
+    messenger = EmQue()
     #print(widget.buttons)
     #print(engine)
     #widget.layout.setStyleSheet("width: 450;height:550;")
