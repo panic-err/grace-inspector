@@ -17,8 +17,6 @@ from __feature__ import snake_case, true_property
 class Hallo(QWidget):
     def emission(self, pos):
         message = self.greeters[pos].text
-        print("[x] Sent %r:%r"%("trout", message))
-        
         self.channel.basic_publish(exchange='topic_logs', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
         
