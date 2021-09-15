@@ -8,6 +8,7 @@ import sys
 import random
 import sys
 import os
+
 from PySide6.QtQuick import QQuickWindow
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
@@ -15,6 +16,10 @@ from PySide6.QtWidgets import (QWidget, QDialog, QVBoxLayout, QApplication, QLin
 from __feature__ import snake_case, true_property
 
 class Hallo(QWidget):
+
+    def closeEvent(self, event):
+        self.channel.close()
+
     def emission(self, pos):
         message = self.greeters[pos].text
         self.channel.basic_publish(exchange='topic_logs', routing_key="trout", body=message)
@@ -94,19 +99,12 @@ class Hallo(QWidget):
 
 if __name__ == "__main__":
     app = QApplication([])
-    #QtWebEngine.initialize()
-    """
-    engine = QQmlApplicationEngine()
-    qml_file_path = "../qml/window.qml"
-    motor = engine.load(qml_file_path)
-    button_file_path = "../qml/button.qml"
-    buttons = engine.load(button_file_path)"""
+    
     widget = Hallo()
 
-    #print(widget.buttons)
-    #print(engine)
-    #widget.layout.setStyleSheet("width: 450;height:550;")
     widget.show()
-    sys.exit(app.exec())
+    app.exec()
+    #This is because app.exec() was just wrapped in sys.exit()
+    #and I need to do some closing
     widget.connection.close()
-    
+    sys.exit()
