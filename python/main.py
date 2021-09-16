@@ -17,12 +17,11 @@ from __feature__ import snake_case, true_property
 
 class Hallo(QWidget):
 
-    def closeEvent(self, event):
-        self.channel.close()
+        
 
     def emission(self, pos):
         message = self.greeters[pos].text
-        self.channel.basic_publish(exchange='topic_logs', routing_key="trout", body=message)
+        self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
         
 
@@ -31,11 +30,15 @@ class Hallo(QWidget):
         creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
         self.channel = self.connection.channel()
-        self.channel.exchange_declare(exchange='topic_logs')
+        self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
+
+        result = self.channel.queue_declare('', exclusive=True)
+
+        queue_name = result.method.queue
 
         self.routing_key = 'trout'
         self.message = 'init'
-        self.channel.basic_publish(exchange='topic_logs', routing_key=self.routing_key, body=self.message)
+        self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body=self.message)
         print("[x] Sent %r:%r" % (self.routing_key, self.message))
         
         
