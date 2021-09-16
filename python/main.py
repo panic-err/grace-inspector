@@ -5,6 +5,7 @@ print(PySide6.__version__)
 import pika
 import sys
 
+import threading
 import random
 import sys
 import os
@@ -15,7 +16,41 @@ from PySide6.QtCore import QUrl, Qt, Slot, Property
 from PySide6.QtWidgets import (QWidget, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
 from __feature__ import snake_case, true_property
 
-class Hallo(QWidget):
+class Receiver():
+
+    def consumeCallback(self, ch, method, properties, body):
+        print("[x], %r:%r" % (method.routing_key, body))
+        bodyStr = str(body)
+        if "EXIT" in bodyStr:
+            print("bye!")
+            self.connection.close()
+            sys.exit()
+
+    def emission(self, pos):
+        message = self.greeters[pos].text
+        self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
+        print("[x] Sent %r:%r" %("trout", message) )
+
+
+    def __init__(self):
+
+        creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
+
+        result = self.channel.queue_declare('', exclusive=True)
+
+        queue_name = result.method.queue
+
+        binding_keys = 'trout'
+        self.channel.queue_bind(exchange='topicex', queue=queue_name, routing_key=binding_keys)
+        self.channel.basic_consume(queue=queue_name, on_message_callback=self.consumeCallback, auto_ack=True)
+        #self.channel.start_consuming()
+        self.routing_key = 'trout'
+        self.message = 'init'
+
+class RocketWrite(QWidget):
 
         
 
@@ -103,9 +138,11 @@ class Hallo(QWidget):
 if __name__ == "__main__":
     app = QApplication([])
     
-    widget = Hallo()
-
+    widget = RocketWrite()
+    recv = Receiver()
+    t = threading.Thread(target=recv.channel.start_consuming)
     widget.show()
+    t.start()
     app.exec()
     #This is because app.exec() was just wrapped in sys.exit()
     #and I need to do some closing

@@ -25,7 +25,6 @@ class Receiver():
             self.connection.close()
             sys.exit()
         
-
     def emission(self, pos):
         message = self.greeters[pos].text
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
@@ -54,4 +53,4 @@ class Receiver():
 if __name__ == "__main__":
     widget = Receiver()
 
-
+    threading.Thread(target=widget.channel.start_consuming())
