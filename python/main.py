@@ -140,6 +140,7 @@ if __name__ == "__main__":
     
     widget = RocketWrite()
     recv = Receiver()
+    #This is because consuming messages is a blocking function
     t = threading.Thread(target=recv.channel.start_consuming)
     widget.show()
     t.start()
