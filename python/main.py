@@ -147,5 +147,6 @@ if __name__ == "__main__":
     app.exec()
     #This is because app.exec() was just wrapped in sys.exit()
     #and I need to do some closing
+    #
     widget.connection.close()
     sys.exit()
