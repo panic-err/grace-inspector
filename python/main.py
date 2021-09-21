@@ -4,6 +4,7 @@ print(PySide6.__version__)
 
 import pika
 import sys
+import time
 
 import threading
 import random
@@ -49,6 +50,28 @@ class Receiver():
         #self.channel.start_consuming()
         self.routing_key = 'trout'
         self.message = 'init'
+
+class Heartbeat():
+    def __init__(self):
+        creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
+
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
+
+        result = self.channel.queue_declare('', exclusive=True)
+
+        queue_name = result.method.queue
+
+        self.routing_key = 'trout'
+        
+
+        self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body="bip")
+        print("[x] Sent %r:%r" % (self.routing_key, "bip"))
+        while True:
+            time.sleep(20)
+            self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body="bip")
+            print("[x] Sent %r:%r" % (self.routing_key, "bip"))
 
 class RocketWrite(QWidget):
 
