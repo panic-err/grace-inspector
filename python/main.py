@@ -51,21 +51,21 @@ class Receiver():
         self.routing_key = 'trout'
         self.message = 'init'
 
-class Heartbeat():
+class Heartbeat(threading.Thread):
     def __init__(self):
+        threading.Thread.__init__(self)
         creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
 
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
 
-        result = self.channel.queue_declare('', exclusive=True)
+        result = self.channel.queue_declare('')
 
         queue_name = result.method.queue
 
-        self.routing_key = 'trout'
-        
-
+        self.routing_key = 'trout' 
+    def run(self):
         self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body="bip")
         print("[x] Sent %r:%r" % (self.routing_key, "bip"))
         while True:
@@ -75,7 +75,7 @@ class Heartbeat():
 
 class RocketWrite(QWidget):
 
-        
+
 
     def emission(self, pos):
         message = self.greeters[pos].text
@@ -84,13 +84,20 @@ class RocketWrite(QWidget):
         
 
     def __init__(self):
-
+        #t = threading.Thread(Heartbeat.__init__)
+        #t.start()
         creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
+        bep = Heartbeat()
+        bep.start()
+        #self.connection = bep.connection
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
-
-        result = self.channel.queue_declare('', exclusive=True)
+        #bep = Heartbeat()
+        #t = threading.Thread(bep.run)
+        #t.start()
+        #bep.start()
+        result = self.channel.queue_declare('')
 
         queue_name = result.method.queue
 
@@ -139,7 +146,9 @@ class RocketWrite(QWidget):
     @Property(QWidget)
     def buttonList():
         return self.buttons
-
+    @Property(QWidget)
+    def conn():
+        return self.connection
     @Slot()
     def name_detail(self):
         self.nameDetail.resize(450, 500)
@@ -167,6 +176,8 @@ if __name__ == "__main__":
     t = threading.Thread(target=recv.channel.start_consuming)
     widget.show()
     t.start()
+    #bip = threading.Thread(target=Heartbeat.__init__)
+    #bip.start()
     app.exec()
     #This is because app.exec() was just wrapped in sys.exit()
     #and I need to do some closing
