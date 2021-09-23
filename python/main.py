@@ -174,7 +174,9 @@ class RocketWrite(QWidget):
             self.emission(butt.position)
         except Exception as e:
             print("Probably a closed pipe")
-            self.reconnect()       
+            self.reconnect()
+            #this works!
+            self.emission(butt.position)
         print("Butt  number"+str(butt.position)) 
         print(self.greeters[butt.position].text)
         print(butt.position)
