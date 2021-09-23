@@ -27,13 +27,13 @@ def asciified(filename):
         #grey = img.crop((0, 0, 128, 128))
         grey = img.load()
         os.remove('101/grey{0}.png'.format(filenameSplit[0]))
-        #print grey[0,0]
+        print(grey[0,0])
         # Create the final file to be made
         numberFiles = len(os.listdir('101'))
         numberFiles += 1
         filepath = '101/{0}.txt'.format(str(numberFiles))
         finalascii = open(filepath, 'w+')
-        #print finalascii
+        print(finalascii)
         for column in range(15):
             for row in range(16):
                 rowcol = grey[row, column]
@@ -42,3 +42,5 @@ def asciified(filename):
                 finalascii.write(asciicode[asciinum])
             finalascii.write("\n")
         return filepath
+
+asciified(sys.argv[1])
