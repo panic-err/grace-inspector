@@ -74,8 +74,21 @@ class Heartbeat(threading.Thread):
             print("[x] Sent %r:%r" % (self.routing_key, "bip"))
 
 class RocketWrite(QWidget):
+    def reconnect(self):
+        creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
 
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
 
+        result = self.channel.queue_declare('')
+
+        queue_name = result.method.queue
+
+        self.routing_key = 'trout' 
+        self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body="bip")
+        print("[x] Sent %r:%r" % (self.routing_key, "bip"))
+ 
 
     def emission(self, pos):
         message = self.greeters[pos].text
@@ -157,7 +170,11 @@ class RocketWrite(QWidget):
     @Slot()
     def greet(self):
         butt = self.focus_widget()
-        self.emission(butt.position)
+        try:
+            self.emission(butt.position)
+        except Exception as e:
+            print("Probably a closed pipe")
+            self.reconnect()       
         print("Butt  number"+str(butt.position)) 
         print(self.greeters[butt.position].text)
         print(butt.position)
@@ -168,6 +185,10 @@ class RocketWrite(QWidget):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) != 4 :
+        print("Usage is python main.py <username> <password> <url of rabbitmq server>")
+        sys.exit()
+    
     app = QApplication([])
     
     widget = RocketWrite()
