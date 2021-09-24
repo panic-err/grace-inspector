@@ -21,7 +21,7 @@ def colour(toColour):
        key=""
        exit = False
        #print("\n\n"+str(size.lines))
-       p = "\033[0;0H"
+       p = ""
        pos = 1
        def calc_red():
             red = randint(1, 255)
@@ -38,7 +38,7 @@ def colour(toColour):
             if blue < 0:
                 blue = 0
             return blue
-       p += "\033["+val+";2;"+str(calc_blue())+";"+str(calc_green())+";"+str(calc_red())+"m"+toColour+" "
+       p += "\x1b["+val+";2;"+str(calc_blue())+";"+str(calc_green())+";"+str(calc_red())+"m"+toColour+" "
        #print(p+"\n")
        #time.sleep(0.01)
        pos = 0

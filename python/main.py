@@ -10,12 +10,64 @@ import threading
 import random
 import sys
 import os
+from random import *
+import datetime
 
 from PySide6.QtQuick import QQuickWindow
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
 from PySide6.QtWidgets import (QWidget, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
 from __feature__ import snake_case, true_property
+
+
+
+def colour(toColour):
+       attack = False
+       seed(int(float(datetime.datetime.now().microsecond)*25485039845))
+       rando = randint(1, 100)
+       if rando > 50:
+               val = "38"
+       else:
+               val = "48"
+
+       key=""
+       exit = False
+       #print("\n\n"+str(size.lines))
+       p = ""
+       pos = 1
+       def calc_red():
+            red = randint(1, 255)
+            if red < 0:
+                red = 0
+            return red
+       def calc_green():
+            green = randint(1, 255)
+            if green < 0:
+                green = 0
+            return green
+       def calc_blue():
+            blue = randint(1, 255)
+            if blue < 0:
+                blue = 0
+            return blue
+
+       p += "\\x1b["+val+";2;"+str(calc_blue())+";"+str(calc_green())+";"+str(calc_red())+"m"+toColour+" "
+       #print(p+"\n")
+       #time.sleep(0.01)
+       pos = 0
+       if not attack:
+           p += " \\033[0m"
+           p += "\033[0m"
+       else:
+           p += ""
+       blank = ""
+       pos = 0
+       total = 0
+       print(p)
+       #print("\033["+str(line)+";0H\033[0m"+blank+"\033[0m")
+
+       return p
+
 
 class Receiver():
 
@@ -74,6 +126,22 @@ class Heartbeat(threading.Thread):
             print("[x] Sent %r:%r" % (self.routing_key, "bip"))
 
 class RocketWrite(QWidget):
+    def calc_red(self):
+        red = randint(1, 255)
+        if red < 0:
+            red = 0
+        return red
+    def calc_green(self):
+        green = randint(1, 255)
+        if green < 0:
+            green = 0
+        return green
+    def calc_blue(self):
+        blue = randint(1, 255)
+        if blue < 0:
+            blue = 0
+        return blue
+
     def reconnect(self):
         creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
 
@@ -92,6 +160,8 @@ class RocketWrite(QWidget):
 
     def emission(self, pos):
         message = self.greeters[pos].text
+        self.greeters[pos].text = message
+        self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
         
@@ -177,6 +247,8 @@ class RocketWrite(QWidget):
             self.reconnect()
             #this works!
             self.emission(butt.position)
+
+
         print("Butt  number"+str(butt.position)) 
         print(self.greeters[butt.position].text)
         print(butt.position)
