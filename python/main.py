@@ -130,16 +130,19 @@ class RocketWrite(QWidget):
         red = randint(1, 255)
         if red < 0:
             red = 0
+        self.red = str(red)
         return red
     def calc_green(self):
         green = randint(1, 255)
         if green < 0:
             green = 0
+        self.green = str(green)
         return green
     def calc_blue(self):
         blue = randint(1, 255)
         if blue < 0:
             blue = 0
+        self.blue = str(blue)
         return blue
 
     def reconnect(self):
@@ -159,8 +162,11 @@ class RocketWrite(QWidget):
  
 
     def emission(self, pos):
-        message = self.greeters[pos].text
-        self.greeters[pos].text = message
+        self.calc_red()
+        self.calc_green()
+        self.calc_blue()
+        message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+self.greeters[pos].text
+        self.greeters[pos].text = self.greeters[pos].text
         self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
