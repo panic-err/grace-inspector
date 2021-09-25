@@ -74,6 +74,11 @@ class Receiver():
     def consumeCallback(self, ch, method, properties, body):
         print("[x], %r:%r" % (method.routing_key, body))
         bodyStr = str(body)
+        print("In loop?")
+        deconBody = bodyStr.split(":")
+        print(deconBody[0][2:])
+        if deconBody[0][2:] == "PACKAGE":
+            print("PACKAGE GET")
         if "EXIT" in bodyStr:
             print("bye!")
             self.connection.close()
