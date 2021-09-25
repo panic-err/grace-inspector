@@ -1,3 +1,5 @@
 #Copyright 2021 Ben Belland.
 
-This is me messing around with zeromq again to see if I can make something fun.
+This is me messing around in qt and python
+
+run with python main.py <user> <pword> <rabbitmqhost>
