@@ -23,7 +23,7 @@ func failOnError(err error, msg string) {
 }
 
 func recv() {
-        conn, err := amqp.Dial("amqp://"+os.Args[1]+":"+os.Args[2]+"@biggest.dumpster.world:5672/")
+        conn, err := amqp.Dial("amqp://"+os.Args[1]+":"+os.Args[2]+"@"+os.Args[3]+":5672/")
         failOnError(err, "Failed to connect to rabbitmq")
         defer conn.Close()
 
@@ -130,7 +130,7 @@ func recv() {
 }
 
 func generateExit() {
-        conn, err := amqp.Dial("amqp://"+os.Args[1]+":"+os.Args[2]+"@biggest.dumpster.world:5672/")
+        conn, err := amqp.Dial("amqp://"+os.Args[1]+":"+os.Args[2]+"@"+os.Args[3]+":5672/")
         failOnError(err, "Failed to connect to RabbitMQ")
         defer conn.Close()
 
@@ -165,7 +165,7 @@ func generateExit() {
 }
 
 func generate(mess string) {
-        conn, err := amqp.Dial("amqp://"+os.Args[1]+":"+os.Args[2]+"@biggest.dumpster.world:5672/")
+        conn, err := amqp.Dial("amqp://"+os.Args[1]+":"+os.Args[2]+"@"+os.Args[3]+":5672/")
         failOnError(err, "Failed to connect to RabbitMQ")
         defer conn.Close()
 
