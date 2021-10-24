@@ -121,7 +121,7 @@ class Heartbeat(threading.Thread):
 
         queue_name = result.method.queue
 
-        self.routing_key = 'trout' 
+        self.routing_key = 'trout'
     def run(self):
         self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body="bip")
         print("[x] Sent %r:%r" % (self.routing_key, "bip"))
@@ -161,10 +161,10 @@ class RocketWrite(QWidget):
 
         queue_name = result.method.queue
 
-        self.routing_key = 'trout' 
+        self.routing_key = 'trout'
         self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body="bip")
         print("[x] Sent %r:%r" % (self.routing_key, "bip"))
- 
+
 
     def emission(self, pos):
         self.calc_red()
@@ -175,7 +175,7 @@ class RocketWrite(QWidget):
         self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
-        
+
 
     def __init__(self):
         #t = threading.Thread(Heartbeat.__init__)
@@ -199,8 +199,8 @@ class RocketWrite(QWidget):
         self.message = 'init'
         self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body=self.message)
         print("[x] Sent %r:%r" % (self.routing_key, self.message))
-        
-        
+
+
         QWidget.__init__(self)
         self.hello =  [
                 "hallo",
@@ -237,6 +237,7 @@ class RocketWrite(QWidget):
             labelDetail = QPushButton(nameDetail)
             #labelDetail.clicked.connect(self.emission)
             self.nameDetailLayout.add_widget(labelDetail)
+        self.established = False
     @Property(QWidget)
     def buttonList():
         return self.buttons
@@ -245,8 +246,26 @@ class RocketWrite(QWidget):
         return self.connection
     @Slot()
     def name_detail(self):
+        #code for showing a string in an array
+        if not self.established:
+            filename = '101/1.txt'
+            out = []
+            outString = ""
+            count = 0
+            with open(filename) as file:
+                lines = file.readlines()
+                for i in range(len(lines)):
+                    outString += lines[i]
+                count += 1
+            print(outString)
+            l = QLabel(outString)
+
+            self.nameDetail.layout().add_widget(l)
+            l.show()
+            self.established = True
+        #self.nameDetail.setText(outString)
         self.nameDetail.resize(450, 500)
-        self.nameDetail.setStyleSheet("color:pink;")
+        self.nameDetail.setStyleSheet("background:black;font:Courier New;color:pink;")
         self.nameDetail.show()
     @Slot()
     def greet(self):
@@ -260,7 +279,7 @@ class RocketWrite(QWidget):
             self.emission(butt.position)
 
 
-        print("Butt  number"+str(butt.position)) 
+        print("Butt  number"+str(butt.position))
         print(self.greeters[butt.position].text)
         print(butt.position)
     @Slot()
@@ -273,9 +292,9 @@ if __name__ == "__main__":
     if len(sys.argv) != 4 :
         print("Usage is python main.py <username> <password> <url of rabbitmq server>")
         sys.exit()
-    
+
     app = QApplication([])
-    
+
     widget = RocketWrite()
     recv = Receiver()
     #This is because consuming messages is a blocking function
