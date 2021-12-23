@@ -213,6 +213,8 @@ class RocketWrite(QWidget):
         self.greeters = []
         self.resize(1000, 550)
         self.layout = QGridLayout(self)
+        self.layout.set_horizontal_spacing(0)
+        self.layout.set_vertical_spacing(0)
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(28):
@@ -278,10 +280,11 @@ class RocketWrite(QWidget):
         try:
             self.emission(butt.position)
             for b in self.greeters:
-                print(b.position)
+                #print(b.position)
                 if b.position == butt.position + 1:
-                    print("Triggered")
+                    #print("Triggered")
                     b.setFocus()
+                    b.text = ""
         except Exception as e:
             print("Probably a closed pipe")
             self.reconnect()
