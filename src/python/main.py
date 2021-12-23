@@ -170,11 +170,12 @@ class RocketWrite(QWidget):
         self.calc_red()
         self.calc_green()
         self.calc_blue()
-        message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+self.greeters[pos].text
+        message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+str(pos)+"::"+self.greeters[pos].text
         self.greeters[pos].text = self.greeters[pos].text
         self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
+
 
 
     def __init__(self):
@@ -216,6 +217,8 @@ class RocketWrite(QWidget):
         #self.layout = QGridLayout(self)
         for i in range(28):
             mess = QLineEdit("Messages!")
+            mess.position = i
+            mess.returnPressed.connect(self.greet)
             self.greeters.append(mess)
             mess.setStyleSheet("color:aqua;")
             self.layout.add_widget(mess, i, 0)
@@ -238,6 +241,7 @@ class RocketWrite(QWidget):
             labelDetail = QPushButton(nameDetail)
             #labelDetail.clicked.connect(self.emission)
             self.nameDetailLayout.add_widget(labelDetail)
+
         self.established = False
     @Property(QWidget)
     def buttonList():
@@ -273,6 +277,11 @@ class RocketWrite(QWidget):
         butt = self.focus_widget()
         try:
             self.emission(butt.position)
+            for b in self.greeters:
+                print(b.position)
+                if b.position == butt.position + 1:
+                    print("Triggered")
+                    b.setFocus()
         except Exception as e:
             print("Probably a closed pipe")
             self.reconnect()
