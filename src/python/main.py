@@ -92,8 +92,8 @@ class Receiver():
 
     def __init__(self):
 
-        creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
+        creds = pika.PlainCredentials(sys.argv[2], sys.argv[3])
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[1], 5672, '/', creds))
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
 
@@ -111,9 +111,9 @@ class Receiver():
 class Heartbeat(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
+        creds = pika.PlainCredentials(sys.argv[2], sys.argv[3])
 
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[1], 5672, '/', creds))
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
 
@@ -151,9 +151,9 @@ class RocketWrite(QWidget):
         return blue
 
     def reconnect(self):
-        creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
+        creds = pika.PlainCredentials(sys.argv[2], sys.argv[3])
 
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[1], 5672, '/', creds))
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
 
@@ -180,11 +180,11 @@ class RocketWrite(QWidget):
     def __init__(self):
         #t = threading.Thread(Heartbeat.__init__)
         #t.start()
-        creds = pika.PlainCredentials(sys.argv[1], sys.argv[2])
+        creds = pika.PlainCredentials(sys.argv[2], sys.argv[3])
         bep = Heartbeat()
         bep.start()
         #self.connection = bep.connection
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[3], 5672, '/', creds))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[1], 5672, '/', creds))
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
         #bep = Heartbeat()
@@ -231,6 +231,7 @@ class RocketWrite(QWidget):
             button.clicked.connect(self.greet)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
+            self.setStyleSheet("background-color:#16394f;")
             self.nameDetail = QDialog()
             self.nameDetailLayout = QVBoxLayout(self.nameDetail)
             nameDetail = "Details"
