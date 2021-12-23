@@ -290,7 +290,12 @@ class RocketWrite(QWidget):
             self.reconnect()
             #this works!
             self.emission(butt.position)
-
+            for b in self.greeters:
+                #print(b.position)
+                if b.position == butt.position + 1:
+                    #print("Triggered")
+                    b.setFocus()
+                    b.text = ""
 
         print("Butt  number"+str(butt.position))
         print(self.greeters[butt.position].text)
