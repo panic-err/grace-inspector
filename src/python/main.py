@@ -79,6 +79,7 @@ class Receiver():
         print(deconBody[0][2:])
         if deconBody[0][2:] == "PACKAGE":
             print("PACKAGE GET")
+            print(deconBody[4])
         if "EXIT" in bodyStr:
             print("bye!")
             self.connection.close()
@@ -170,9 +171,18 @@ class RocketWrite(QWidget):
         self.calc_red()
         self.calc_green()
         self.calc_blue()
-        message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+str(pos)+"::"+self.greeters[pos].text
+        message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+str(pos+1)+":"+self.greeters[pos].text
         self.greeters[pos].text = self.greeters[pos].text
         self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
+        self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
+        print("[x] Sent %r:%r" %("trout", message) )
+
+
+
+    def emissionNoColour(self, pos):
+        message = "PACKAGE::::"+str(pos+1)+":"+self.greeters[pos].text
+        self.greeters[pos].text = self.greeters[pos].text
+        #self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
 
@@ -211,6 +221,7 @@ class RocketWrite(QWidget):
 
         self.buttons = []
         self.greeters = []
+        self.senders = []
         self.resize(1000, 550)
         self.layout = QGridLayout(self)
         self.layout.set_horizontal_spacing(0)
@@ -230,10 +241,16 @@ class RocketWrite(QWidget):
             self.layout.add_widget(nameButton, i, 1)
             button = QPushButton(str(i))
             button.setStyleSheet("color:orange;")
-            self.position = i
+            #self.position = i
             button.position = i
             self.layout.add_widget(button, i, 2)
+            send = QPushButton("SEND")
+            send.setStyleSheet("color:aqua;")
+            send.position = i
+            send.clicked.connect(self.greetNoColour)
             button.clicked.connect(self.greet)
+            self.senders.append(send)
+            self.layout.add_widget(send, i, 3)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
             self.setStyleSheet("background-color:#16394f;")
@@ -300,6 +317,22 @@ class RocketWrite(QWidget):
         print("Butt  number"+str(butt.position))
         print(self.greeters[butt.position].text)
         print(butt.position)
+    @Slot()
+    def greetNoColour(self):
+        butt = self.focus_widget()
+        try:
+            self.emissionNoColour(butt.position)
+
+        except Exception as e:
+            print("Probably a closed pipe")
+            self.reconnect()
+            #this works!
+            self.emissionNoColour(butt.position)
+
+        print("Butt  number"+str(butt.position))
+        print(self.greeters[butt.position].text)
+        print(butt.position)
+
     @Slot()
     def boop():
         print("boop")
