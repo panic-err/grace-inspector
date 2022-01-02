@@ -69,7 +69,7 @@ def colour(toColour):
        return p
 
 
-class Receiver():
+class Receiver(QWidget):
 
     def consumeCallback(self, ch, method, properties, body):
         print("[x], %r:%r" % (method.routing_key, body))
@@ -80,6 +80,8 @@ class Receiver():
         if deconBody[0][2:] == "PACKAGE":
             print("PACKAGE GET")
             print(deconBody[4])
+            print(deconBody)
+            self.greeters[int(deconBody[4])+1].setText(deconBody[5])
         if "EXIT" in bodyStr:
             print("bye!")
             self.connection.close()
@@ -92,22 +94,96 @@ class Receiver():
 
 
     def __init__(self):
-
+        #t = threading.Thread(Heartbeat.__init__)
+        #t.start()
         creds = pika.PlainCredentials(sys.argv[2], sys.argv[3])
+        bep = Heartbeat()
+        bep.start()
+        #self.connection = bep.connection
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[1], 5672, '/', creds))
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
-
-        result = self.channel.queue_declare('', exclusive=True)
+        #bep = Heartbeat()
+        #t = threading.Thread(bep.run)
+        #t.start()
+        #bep.start()
+        result = self.channel.queue_declare('')
 
         queue_name = result.method.queue
+
+        self.routing_key = 'trout'
+        self.message = 'init'
+        #self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body=self.message)
+        print("[x] Sent %r:%r" % (self.routing_key, self.message))
+
+
+        QWidget.__init__(self)
+        self.hello =  [
+                "hallo",
+                "hi",
+                "hola"
+                ]
+
+        self.buttons = []
+        self.greeters = []
+        self.senders = []
+        self.resize(1000, 550)
+        self.layout = QGridLayout(self)
+        self.layout.set_horizontal_spacing(0)
+        self.layout.set_vertical_spacing(0)
+        #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
+        #self.layout = QGridLayout(self)
+        for i in range(28):
+            mess = QLineEdit("Messages!")
+            mess.position = i
+            #mess.returnPressed.connect(self.greet)
+            self.greeters.append(mess)
+            mess.setStyleSheet("color:aqua;")
+            self.layout.add_widget(mess, i, 0)
+            nameButton = QPushButton("NAME")
+            #nameButton.clicked.connect(self.name_detail)
+            nameButton.setStyleSheet("color:aqua;")
+            self.layout.add_widget(nameButton, i, 1)
+            button = QPushButton(str(i))
+            button.setStyleSheet("color:red;")
+            #self.position = i
+            button.position = i
+            self.layout.add_widget(button, i, 2)
+            send = QPushButton("SEND")
+            send.setStyleSheet("color:aqua;")
+            send.position = i
+            #send.clicked.connect(self.greetNoColour)
+            #button.clicked.connect(self.greet)
+            self.senders.append(send)
+            self.layout.add_widget(send, i, 3)
+            #button.object_name = "butt"+str(i)
+            self.buttons.append(button)
+            self.setStyleSheet("background-color:#16394f;")
+            self.nameDetail = QDialog()
+            self.nameDetailLayout = QVBoxLayout(self.nameDetail)
+            nameDetail = "Details"
+            labelDetail = QPushButton(nameDetail)
+            #labelDetail.clicked.connect(self.emission)
+            self.nameDetailLayout.add_widget(labelDetail)
+
+        self.established = False
+
+        #creds = pika.PlainCredentials(sys.argv[2], sys.argv[3])
+        #self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[1], 5672, '/', creds))
+        #self.channel = self.connection.channel()
+        #self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
+
+        #result = self.channel.queue_declare('', exclusive=True)
+
+        #queue_name = result.method.queue
 
         binding_keys = 'trout'
         self.channel.queue_bind(exchange='topicex', queue=queue_name, routing_key=binding_keys)
         self.channel.basic_consume(queue=queue_name, on_message_callback=self.consumeCallback, auto_ack=True)
-        #self.channel.start_consuming()
         self.routing_key = 'trout'
         self.message = 'init'
+        self.show()
+        #self.channel.start_consuming()
 
 class Heartbeat(threading.Thread):
     def __init__(self):
