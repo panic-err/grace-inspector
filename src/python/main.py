@@ -75,9 +75,11 @@ class Receiver(QWidget):
         print("[x], %r:%r" % (method.routing_key, body))
         bodyStr = str(body)
         print("In loop?")
+        if "bip" in bodyStr:
+            return
         deconBody = bodyStr.split(":")
         print(deconBody[0][2:])
-        mess = deconBody[5].split("\"")[0].split("\'")[0]
+        mess = deconBody[5][:-1]
         if deconBody[0][2:] == "PACKAGE":
             print("PACKAGE GET")
             print(deconBody[4])
