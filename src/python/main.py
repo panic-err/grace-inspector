@@ -78,6 +78,13 @@ class Receiver(QWidget):
         if "bip" in bodyStr:
             return
         deconBody = bodyStr.split(":")
+        if len(deconBody) > 6:
+            print("Illegal character found")
+            subBody = ""
+            for i in range(len(deconBody)):
+                if i >= 5:
+                    subBody += deconBody[i]
+            deconBody[5] = subBody
         print(deconBody[0][2:])
         mess = deconBody[5][:-1]
         if deconBody[0][2:] == "PACKAGE":
