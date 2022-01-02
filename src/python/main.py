@@ -14,10 +14,11 @@ from random import *
 import datetime
 
 from PySide6.QtQuick import QQuickWindow
+from PySide6.QtGui import Qt
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
-from PySide6.QtWidgets import (QWidget, QProgressBar, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
-from __feature__ import snake_case, true_property
+from PySide6.QtWidgets import (QWidget, QProgressBar, QFrame, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
+from __feature__ import snake_case
 
 
 
@@ -176,11 +177,18 @@ class Receiver(QWidget):
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(28):
-
-            mess = QLineEdit("Messages!")
-            mess.position = i
-            mess.coord = 8
-
+            if i > 6:
+                mess = QLineEdit("Messages!")
+                mess.position = i
+                mess.coord = 8
+            else:
+                mess = QLabel("HEADER")
+                mess.position = i
+                mess.coord = 8
+                mess.set_alignment(Qt.AlignBottom | Qt.AlignCenter)
+                mess.setText("HEADER")
+                mess.setStyleSheet("margin:0 auto;")
+                mess.show()
             #mess.returnPressed.connect(self.greet)
             self.greeters.append(mess)
             mess.setStyleSheet("color:aqua;")
