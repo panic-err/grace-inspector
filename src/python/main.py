@@ -77,11 +77,12 @@ class Receiver(QWidget):
         print("In loop?")
         deconBody = bodyStr.split(":")
         print(deconBody[0][2:])
+        mess = deconBody[5].split("\"")[0].split("\'")[0]
         if deconBody[0][2:] == "PACKAGE":
             print("PACKAGE GET")
             print(deconBody[4])
             print(deconBody)
-            self.greeters[int(deconBody[4])+1].setText(deconBody[5])
+            self.greeters[int(deconBody[4])+1].setText(mess)
         if "EXIT" in bodyStr:
             print("bye!")
             self.connection.close()
