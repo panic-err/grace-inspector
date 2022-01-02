@@ -91,11 +91,17 @@ class Receiver(QWidget):
                 #spacer = QPushButton("    ")
                 #self.layout.add_widget(spacer, int(deconBody[4]), self.greeters[int(deconBody[4])].coord)
                 #self.spacers[int(deconBody[4])].setStyleSheet("QProgressBar {color: rgb(0, 0, 200);}")
-                self.spacers[int(deconBody[4])].setValue(self.spacers[int(deconBody[4])].coord * 10)
+                self.spacers[int(deconBody[4])].setValue(self.spacers[int(deconBody[4])].coord)
                 #self.spacers[int(deconBody[4])].setText("")
                 #self.show()
             elif self.spacers[int(deconBody[4])].coord > 10:
                 self.spacers[int(deconBody[4])].coord = 10
+        if "SURFACE" in deconBody[5]:
+            if self.spacers[int(deconBody[4])].coord >= 0:
+                self.spacers[int(deconBody[4])].coord += 1
+                self.spacers[int(deconBody[4])].setValue(self.spacers[int(deconBody[4])].coord)
+            elif self.spacers[int(deconBody[4])].coord < 0:
+                self.spacers[int(deconBody[4])].coord = 0
         print(deconBody[0][2:])
         mess = deconBody[5][:-1]
         if deconBody[0][2:] == "PACKAGE":
@@ -166,6 +172,7 @@ class Receiver(QWidget):
             if mess.coord < 10:
                 spacer = QProgressBar()
                 spacer.coord = 8
+                spacer.setMaximum(10)
                 self.layout.add_widget(spacer, i, mess.coord)
                 self.spacers.append(spacer)
             nameButton = QPushButton("NAME")
