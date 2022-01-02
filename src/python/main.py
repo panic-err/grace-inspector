@@ -86,29 +86,26 @@ class Receiver(QWidget):
                     subBody += deconBody[i]
             deconBody[5] = subBody
         if "DRILL" in deconBody[5]:
-            if self.spacers[int(deconBody[4])].coord <= 10:
-                self.spacers[int(deconBody[4])].coord -= 1
-                #spacer = QPushButton("    ")
-                #self.layout.add_widget(spacer, int(deconBody[4]), self.greeters[int(deconBody[4])].coord)
-                #self.spacers[int(deconBody[4])].setStyleSheet("QProgressBar {color: rgb(0, 0, 200);}")
-                self.spacers[int(deconBody[4])].setValue(self.spacers[int(deconBody[4])].coord)
-                #self.spacers[int(deconBody[4])].setText("")
-                #self.show()
-            elif self.spacers[int(deconBody[4])].coord > 10:
-                self.spacers[int(deconBody[4])].coord = 10
+            if self.spacers[int(deconBody[4])-1].coord <= 10:
+                self.spacers[int(deconBody[4])-1].coord -= 1
+                self.spacers[int(deconBody[4])-1].setValue(self.spacers[int(deconBody[4])-1].coord)
+            elif self.spacers[int(deconBody[4])-1].coord > 10:
+                self.spacers[int(deconBody[4])-1].coord = 10
+            return
         if "SURFACE" in deconBody[5]:
-            if self.spacers[int(deconBody[4])].coord >= 0:
-                self.spacers[int(deconBody[4])].coord += 1
-                self.spacers[int(deconBody[4])].setValue(self.spacers[int(deconBody[4])].coord)
-            elif self.spacers[int(deconBody[4])].coord < 0:
-                self.spacers[int(deconBody[4])].coord = 0
+            if self.spacers[int(deconBody[4])-1].coord >= 0:
+                self.spacers[int(deconBody[4])-1].coord += 1
+                self.spacers[int(deconBody[4])-1].setValue(self.spacers[int(deconBody[4])-1].coord)
+            elif self.spacers[int(deconBody[4])-1].coord < 0:
+                self.spacers[int(deconBody[4])-1].coord = 0
+            return
         print(deconBody[0][2:])
         mess = deconBody[5][:-1]
         if deconBody[0][2:] == "PACKAGE":
             print("PACKAGE GET")
             print(deconBody[4])
             print(deconBody)
-            self.greeters[int(deconBody[4])].setText(mess)
+            self.greeters[int(deconBody[4])-1].setText(mess)
         if "EXIT" in bodyStr:
             print("bye!")
             self.connection.close()
