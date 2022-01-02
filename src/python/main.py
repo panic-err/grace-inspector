@@ -16,7 +16,7 @@ import datetime
 from PySide6.QtQuick import QQuickWindow
 from PySide6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PySide6.QtCore import QUrl, Qt, Slot, Property
-from PySide6.QtWidgets import (QWidget, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
+from PySide6.QtWidgets import (QWidget, QProgressBar, QDialog, QVBoxLayout, QApplication, QLineEdit, QLabel, QPushButton, QGridLayout)
 from __feature__ import snake_case, true_property
 
 
@@ -85,13 +85,24 @@ class Receiver(QWidget):
                 if i >= 5:
                     subBody += deconBody[i]
             deconBody[5] = subBody
+        if "DRILL" in deconBody[5]:
+            if self.spacers[int(deconBody[4])].coord <= 10:
+                self.spacers[int(deconBody[4])].coord -= 1
+                #spacer = QPushButton("    ")
+                #self.layout.add_widget(spacer, int(deconBody[4]), self.greeters[int(deconBody[4])].coord)
+                #self.spacers[int(deconBody[4])].setStyleSheet("QProgressBar {color: rgb(0, 0, 200);}")
+                self.spacers[int(deconBody[4])].setValue(self.spacers[int(deconBody[4])].coord * 10)
+                #self.spacers[int(deconBody[4])].setText("")
+                #self.show()
+            elif self.spacers[int(deconBody[4])].coord > 10:
+                self.spacers[int(deconBody[4])].coord = 10
         print(deconBody[0][2:])
         mess = deconBody[5][:-1]
         if deconBody[0][2:] == "PACKAGE":
             print("PACKAGE GET")
             print(deconBody[4])
             print(deconBody)
-            self.greeters[int(deconBody[4])+1].setText(mess)
+            self.greeters[int(deconBody[4])].setText(mess)
         if "EXIT" in bodyStr:
             print("bye!")
             self.connection.close()
@@ -107,8 +118,6 @@ class Receiver(QWidget):
         #t = threading.Thread(Heartbeat.__init__)
         #t.start()
         creds = pika.PlainCredentials(sys.argv[2], sys.argv[3])
-        bep = Heartbeat()
-        bep.start()
         #self.connection = bep.connection
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[1], 5672, '/', creds))
         self.channel = self.connection.channel()
@@ -137,6 +146,7 @@ class Receiver(QWidget):
         self.buttons = []
         self.greeters = []
         self.senders = []
+        self.spacers = []
         self.resize(1000, 550)
         self.layout = QGridLayout(self)
         self.layout.set_horizontal_spacing(0)
@@ -144,12 +154,20 @@ class Receiver(QWidget):
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(28):
+
             mess = QLineEdit("Messages!")
             mess.position = i
+            mess.coord = 8
+
             #mess.returnPressed.connect(self.greet)
             self.greeters.append(mess)
             mess.setStyleSheet("color:aqua;")
             self.layout.add_widget(mess, i, 0)
+            if mess.coord < 10:
+                spacer = QProgressBar()
+                spacer.coord = 8
+                self.layout.add_widget(spacer, i, mess.coord)
+                self.spacers.append(spacer)
             nameButton = QPushButton("NAME")
             #nameButton.clicked.connect(self.name_detail)
             nameButton.setStyleSheet("color:aqua;")
