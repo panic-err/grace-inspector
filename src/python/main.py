@@ -110,6 +110,23 @@ class Receiver(QWidget):
             print("bye!")
             self.connection.close()
             sys.exit()
+    @Slot()
+    def dig(self):
+        butt = self.focus_widget()
+        if self.spacers[butt.position].coord <= 10:
+            self.spacers[butt.position].coord -= 1
+            self.spacers[butt.position].setValue(self.spacers[butt.position].coord)
+        elif self.spacers[butt.position].coord > 10:
+            self.spacers[butt.position].coord = 10
+    @Slot()
+    def surface(self):
+        butt = self.focus_widget()
+        if self.spacers[butt.position].coord >= 0:
+            self.spacers[butt.position].coord += 1
+            self.spacers[butt.position].setValue(self.spacers[butt.position].coord)
+        elif self.spacers[butt.position].coord < 0:
+            self.spacers[butt.position].coord = 0
+
 
     def emission(self, pos):
         message = self.greeters[pos].text
@@ -132,7 +149,7 @@ class Receiver(QWidget):
         result = self.channel.queue_declare('')
 
         queue_name = result.method.queue
-
+        self.position = 0
         self.routing_key = 'trout'
         self.message = 'init'
         #self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body=self.message)
@@ -150,6 +167,8 @@ class Receiver(QWidget):
         self.greeters = []
         self.senders = []
         self.spacers = []
+        self.diggers = []
+        self.surfacers = []
         self.resize(1000, 550)
         self.layout = QGridLayout(self)
         self.layout.set_horizontal_spacing(0)
@@ -170,24 +189,45 @@ class Receiver(QWidget):
                 spacer = QProgressBar()
                 spacer.coord = 8
                 spacer.setMaximum(10)
-                self.layout.add_widget(spacer, i, mess.coord)
+                if i < 6:
+                    spacer.setStyleSheet("background-color:green;")
+                self.layout.add_widget(spacer, i, 4)
+
                 self.spacers.append(spacer)
-            nameButton = QPushButton("NAME")
+            if i < 6:
+                nameButton = QPushButton("+")
+                nameButton.position = i
+                nameButton.clicked.connect(self.surface)
+            else:
+                nameButton = QPushButton("NAME")
             #nameButton.clicked.connect(self.name_detail)
             nameButton.setStyleSheet("color:aqua;")
             self.layout.add_widget(nameButton, i, 1)
-            button = QPushButton(str(i))
+            if i < 6:
+                button = QPushButton("-")
+                button.position = i
+                button.clicked.connect(self.dig)
+            else:
+                button = QPushButton(str(i))
+
             button.setStyleSheet("color:red;")
             #self.position = i
             button.position = i
             self.layout.add_widget(button, i, 2)
-            send = QPushButton("SEND")
-            send.setStyleSheet("color:aqua;")
-            send.position = i
-            #send.clicked.connect(self.greetNoColour)
-            #button.clicked.connect(self.greet)
-            self.senders.append(send)
-            self.layout.add_widget(send, i, 3)
+            if i < 6:
+                head = QPushButton("HEAD")
+                head.setStyleSheet("background-color:orange;")
+                head.position = i
+                self.senders.append(head)
+                self.layout.add_widget(head, i, 3)
+            else:
+                send = QPushButton("SEND")
+                send.setStyleSheet("color:aqua;")
+                send.position = i
+                #send.clicked.connect(self.greetNoColour)
+                #button.clicked.connect(self.greet)
+                self.senders.append(send)
+                self.layout.add_widget(send, i, 3)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
             self.setStyleSheet("background-color:#16394f;")
