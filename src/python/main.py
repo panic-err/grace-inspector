@@ -105,7 +105,7 @@ class Receiver(QWidget):
         if deconBody[0][2:] == "PACKAGE":
             print("PACKAGE GET")
             print(deconBody[4])
-            print(deconBody)
+            #print(deconBody)
             self.greeters[int(deconBody[4])-1].setText(mess)
         if "EXIT" in bodyStr:
             print("bye!")
@@ -130,7 +130,7 @@ class Receiver(QWidget):
 
 
     def emission(self, pos):
-        message = self.greeters[pos].text
+        message = self.greeters[pos].text()
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
 
@@ -177,7 +177,7 @@ class Receiver(QWidget):
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(28):
-            if i > 6:
+            if i >= 6:
                 mess = QLineEdit("Messages!")
                 mess.position = i
                 mess.coord = 8
@@ -327,8 +327,8 @@ class RocketWrite(QWidget):
         self.calc_red()
         self.calc_green()
         self.calc_blue()
-        message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+str(pos+1)+":"+self.greeters[pos].text
-        self.greeters[pos].text = self.greeters[pos].text
+        message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+str(pos+1)+":"+str(self.greeters[pos].text())
+        #self.greeters[pos].text = self.greeters[pos].text
         self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
@@ -336,8 +336,8 @@ class RocketWrite(QWidget):
 
 
     def emissionNoColour(self, pos):
-        message = "PACKAGE::::"+str(pos+1)+":"+self.greeters[pos].text
-        self.greeters[pos].text = self.greeters[pos].text
+        message = "PACKAGE::::"+str(pos+1)+":"+str(self.greeters[pos].text())
+        #self.greeters[pos].get_text() = self.greeters[pos].get_text()
         #self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
@@ -437,7 +437,7 @@ class RocketWrite(QWidget):
                 for i in range(len(lines)):
                     outString += lines[i]
                 count += 1
-            print(outString)
+            #print(outString)
             l = QLabel(outString)
 
             self.nameDetail.layout().add_widget(l)
@@ -471,7 +471,7 @@ class RocketWrite(QWidget):
                     b.text = ""
 
         print("Butt  number"+str(butt.position))
-        print(self.greeters[butt.position].text)
+        print(self.greeters[butt.position].text())
         print(butt.position)
     @Slot()
     def greetNoColour(self):
@@ -486,7 +486,7 @@ class RocketWrite(QWidget):
             self.emissionNoColour(butt.position)
 
         print("Butt  number"+str(butt.position))
-        print(self.greeters[butt.position].text)
+        print(self.greeters[butt.position].text())
         print(butt.position)
 
     @Slot()
