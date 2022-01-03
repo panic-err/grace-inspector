@@ -337,7 +337,7 @@ class RocketWrite(QWidget):
 
     def emissionNoColour(self, pos):
         message = "PACKAGE::::"+str(pos+1)+":"+str(self.greeters[pos].text())
-        #self.greeters[pos].get_text() = self.greeters[pos].get_text()
+        #self.greeters[pos].text() = self.greeters[pos].text()
         #self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
@@ -457,7 +457,7 @@ class RocketWrite(QWidget):
                 if b.position == butt.position + 1:
                     #print("Triggered")
                     b.setFocus()
-                    b.text = ""
+                    b.set_text("")
         except Exception as e:
             print("Probably a closed pipe")
             self.reconnect()
@@ -468,7 +468,7 @@ class RocketWrite(QWidget):
                 if b.position == butt.position + 1:
                     #print("Triggered")
                     b.setFocus()
-                    b.text = ""
+                    b.set_text("")
 
         print("Butt  number"+str(butt.position))
         print(self.greeters[butt.position].text())
