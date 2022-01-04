@@ -5,6 +5,7 @@ print(PySide6.__version__)
 import pika
 import sys
 import time
+import psycopg2
 
 import threading
 import random
@@ -702,9 +703,19 @@ class RocketWrite(QWidget):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4 :
-        print("Usage is python main.py <username> <password> <url of rabbitmq server>")
+    if len(sys.argv) != 6 :
+        print("Usage is python main.py <username> <password> <url of rabbitmq server> <db name> <db user>")
         sys.exit()
+
+
+    #create the database Connection
+    conn = psycopg2.connect("dbname="+sys.argv[4]+" user="+sys.argv[5])
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM threads")
+
+    records = cur.fetchall()
+    print(records)
 
     app = QApplication([])
 
@@ -717,6 +728,8 @@ if __name__ == "__main__":
     widget.show()
     input.show()
     t.start()
+
+
     #tt.start()
     #bip = threading.Thread(target=Heartbeat.__init__)
     #bip.start()
