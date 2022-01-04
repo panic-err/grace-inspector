@@ -69,6 +69,208 @@ def colour(toColour):
 
        return p
 
+class InputBox(QWidget):
+
+    def calc_red(self):
+        red = randint(1, 255)
+        if red < 0:
+            red = 0
+        self.red = str(red)
+        return red
+    def calc_green(self):
+        green = randint(1, 255)
+        if green < 0:
+            green = 0
+        self.green = str(green)
+        return green
+    def calc_blue(self):
+        blue = randint(1, 255)
+        if blue < 0:
+            blue = 0
+        self.blue = str(blue)
+        return blue
+
+    def reconnect(self):
+        creds = pika.PlainCredentials(sys.argv[2], sys.argv[3])
+
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[1], 5672, '/', creds))
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
+
+        result = self.channel.queue_declare('')
+
+        queue_name = result.method.queue
+
+        self.routing_key = 'trout'
+        self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body="bip")
+        print("[x] Sent %r:%r" % (self.routing_key, "bip"))
+
+
+    def emission(self, pos):
+        self.calc_red()
+        self.calc_green()
+        self.calc_blue()
+        message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+str(pos+1)+":"+str(self.greeters[pos].text())
+        #self.greeters[pos].text = self.greeters[pos].text
+        self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
+        self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
+        print("[x] Sent %r:%r" %("trout", message) )
+
+
+
+    def emissionNoColour(self, pos):
+        message = "PACKAGE::::"+str(pos+1)+":"+str(self.greeters[pos].text())
+        #self.greeters[pos].text() = self.greeters[pos].text()
+        #self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
+        self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
+        print("[x] Sent %r:%r" %("trout", message) )
+
+
+
+    def __init__(self):
+        #t = threading.Thread(Heartbeat.__init__)
+        #t.start()
+        creds = pika.PlainCredentials(sys.argv[2], sys.argv[3])
+        bep = Heartbeat()
+        bep.start()
+        #self.connection = bep.connection
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(sys.argv[1], 5672, '/', creds))
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange='topicex', exchange_type='topic')
+        #bep = Heartbeat()
+        #t = threading.Thread(bep.run)
+        #t.start()
+        #bep.start()
+        result = self.channel.queue_declare('')
+
+        queue_name = result.method.queue
+
+        self.routing_key = 'trout'
+        self.message = 'init'
+        self.channel.basic_publish(exchange='topicex', routing_key=self.routing_key, body=self.message)
+        print("[x] Sent %r:%r" % (self.routing_key, self.message))
+
+
+        QWidget.__init__(self)
+        self.hello =  [
+                "hallo",
+                "hi",
+                "hola"
+                ]
+
+        self.buttons = []
+        self.greeters = []
+        self.senders = []
+        self.resize(800, 150)
+        self.layout = QGridLayout(self)
+        self.layout.set_horizontal_spacing(0)
+        self.layout.set_vertical_spacing(0)
+        #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
+        #self.layout = QGridLayout(self)
+        for i in range(1):
+            mess = QLineEdit("Messages!")
+            mess.position = i
+            mess.set_max_length(60)
+            mess.returnPressed.connect(self.greet)
+            self.greeters.append(mess)
+            mess.setStyleSheet("color:aqua;")
+            self.layout.add_widget(mess, i, 0)
+            nameButton = QPushButton(sys.argv[2])
+            nameButton.clicked.connect(self.name_detail)
+            nameButton.setStyleSheet("color:aqua;")
+            self.layout.add_widget(nameButton, i, 1)
+            button = QPushButton(str(i))
+            button.setStyleSheet("color:orange;")
+            #self.position = i
+            button.position = i
+            self.layout.add_widget(button, i, 2)
+            send = QPushButton("SEND")
+            send.setStyleSheet("color:aqua;")
+            send.position = i
+            send.clicked.connect(self.greetNoColour)
+            button.clicked.connect(self.greet)
+            self.senders.append(send)
+            self.layout.add_widget(send, i, 3)
+            #button.object_name = "butt"+str(i)
+            self.buttons.append(button)
+            self.setStyleSheet("background-color:#16394f;")
+            self.nameDetail = QDialog()
+            self.nameDetailLayout = QVBoxLayout(self.nameDetail)
+            nameDetail = "Details"
+            labelDetail = QPushButton(nameDetail)
+            #labelDetail.clicked.connect(self.emission)
+            self.nameDetailLayout.add_widget(labelDetail)
+
+        self.established = False
+    @Property(QWidget)
+    def buttonList():
+        return self.buttons
+    @Property(QWidget)
+    def conn():
+        return self.connection
+    @Slot()
+    def name_detail(self):
+        #code for showing a string in an array
+        if not self.established:
+            filename = '101/1.txt'
+            out = []
+            outString = ""
+            count = 0
+            with open(filename) as file:
+                lines = file.readlines()
+                for i in range(len(lines)):
+                    outString += lines[i]
+                count += 1
+            #print(outString)
+            l = QLabel(outString)
+
+            self.nameDetail.layout().add_widget(l)
+            l.show()
+            self.established = True
+        #self.nameDetail.setText(outString)
+        self.nameDetail.resize(450, 500)
+        self.nameDetail.setStyleSheet("background:black;font:Courier New;color:pink;")
+        self.nameDetail.show()
+    @Slot()
+    def greet(self):
+        butt = self.focus_widget()
+        try:
+            self.emissionNoColour(butt.position)
+        except Exception as e:
+            print("Probably a closed pipe")
+            self.reconnect()
+            #this works!
+            self.emissionNoColour(butt.position)
+            for b in self.greeters:
+                #print(b.position)
+                if b.position == butt.position:
+                    print("Triggered")
+                    #b.setFocus()
+                    b.set_text("")
+
+        print("Butt  number"+str(butt.position))
+        print(self.greeters[butt.position].text())
+        print(butt.position)
+    @Slot()
+    def greetNoColour(self):
+        butt = self.focus_widget()
+        try:
+            self.emissionNoColour(butt.position)
+
+        except Exception as e:
+            print("Probably a closed pipe")
+            self.reconnect()
+            #this works!
+            self.emissionNoColour(butt.position)
+
+        print("Butt  number"+str(butt.position))
+        print(self.greeters[butt.position].text())
+        print(butt.position)
+
+    @Slot()
+    def boop():
+        print("boop")
+        #self.message.text = random.choice(self.hello)
 
 class Receiver(QWidget):
 
@@ -79,6 +281,9 @@ class Receiver(QWidget):
         if "bip" in bodyStr:
             return
         deconBody = bodyStr.split(":")
+        if len(deconBody) < 6:
+            bodyStr = "PACKAGE::::"+"::"
+            deconBody = bodyStr.split(":")
         if len(deconBody) > 6:
             print("Illegal character found")
             subBody = ""
@@ -86,14 +291,14 @@ class Receiver(QWidget):
                 if i >= 5:
                     subBody += deconBody[i]
             deconBody[5] = subBody
-        if "DRILL" in deconBody[5]:
+        if "DRILL" in deconBody[5] and len(deconBody) < 6:
             if self.spacers[int(deconBody[4])-1].coord <= 10:
                 self.spacers[int(deconBody[4])-1].coord -= 1
                 self.spacers[int(deconBody[4])-1].setValue(self.spacers[int(deconBody[4])-1].coord)
             elif self.spacers[int(deconBody[4])-1].coord > 10:
                 self.spacers[int(deconBody[4])-1].coord = 10
             return
-        if "SURFACE" in deconBody[5]:
+        if "SURFACE" in deconBody[5] and len(deconBody) < 6:
             if self.spacers[int(deconBody[4])-1].coord >= 0:
                 self.spacers[int(deconBody[4])-1].coord += 1
                 self.spacers[int(deconBody[4])-1].setValue(self.spacers[int(deconBody[4])-1].coord)
@@ -170,7 +375,7 @@ class Receiver(QWidget):
         self.spacers = []
         self.diggers = []
         self.surfacers = []
-        self.resize(1000, 550)
+        self.resize(1115, 550)
         self.layout = QGridLayout(self)
         self.layout.set_horizontal_spacing(0)
         self.layout.set_vertical_spacing(0)
@@ -378,20 +583,21 @@ class RocketWrite(QWidget):
         self.buttons = []
         self.greeters = []
         self.senders = []
-        self.resize(1000, 550)
+        self.resize(800, 150)
         self.layout = QGridLayout(self)
         self.layout.set_horizontal_spacing(0)
         self.layout.set_vertical_spacing(0)
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
-        for i in range(28):
+        for i in range(6):
             mess = QLineEdit("Messages!")
             mess.position = i
+            mess.set_max_length(60)
             mess.returnPressed.connect(self.greet)
             self.greeters.append(mess)
             mess.setStyleSheet("color:aqua;")
             self.layout.add_widget(mess, i, 0)
-            nameButton = QPushButton("NAME")
+            nameButton = QPushButton(sys.argv[2])
             nameButton.clicked.connect(self.name_detail)
             nameButton.setStyleSheet("color:aqua;")
             self.layout.add_widget(nameButton, i, 1)
@@ -504,10 +710,14 @@ if __name__ == "__main__":
 
     widget = RocketWrite()
     recv = Receiver()
+    input = InputBox()
     #This is because consuming messages is a blocking function
+    #tt = threading.Thread(target=input.channel.start_consuming)
     t = threading.Thread(target=recv.channel.start_consuming)
     widget.show()
+    input.show()
     t.start()
+    #tt.start()
     #bip = threading.Thread(target=Heartbeat.__init__)
     #bip.start()
     app.exec()
