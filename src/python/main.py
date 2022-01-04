@@ -169,6 +169,7 @@ class InputBox(QWidget):
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(1):
+            self.set_window_title("Input Bar")
             mess = QLineEdit("Messages!")
             mess.position = i
             mess.set_max_length(60)
@@ -383,6 +384,7 @@ class Receiver(QWidget):
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(28):
+            self.set_window_title("Main")
             if i >= 6:
                 mess = QLineEdit("Messages!")
                 mess.position = i
@@ -424,13 +426,16 @@ class Receiver(QWidget):
                 button.clicked.connect(self.dig)
             else:
                 button = QPushButton(str(i))
-
+            if i == 10:
+                b = QPushButton("Messages as they are added\n0:0:0:0:0:0:0:0:0:0")
+                #this should be added to a collection
+                self.layout.add_widget(b, i, 6, 28, 1)
             button.setStyleSheet("color:red;")
             #self.position = i
             button.position = i
             self.layout.add_widget(button, i, 5)
             if i < 6:
-                head = QPushButton("HEAD")
+                head = QPushButton("GLOBAL")
                 head.setStyleSheet("background-color:orange;")
                 head.position = i
                 self.senders.append(head)
@@ -592,6 +597,7 @@ class RocketWrite(QWidget):
         #self.setStyleSheet("QGridLayout {background-image: url('../art/pastel.png') 0 0 0 0 stretch stretch;color:green;}")
         #self.layout = QGridLayout(self)
         for i in range(6):
+            self.set_window_title("Global headers")
             mess = QLineEdit("Messages!")
             mess.position = i
             mess.set_max_length(60)
