@@ -403,12 +403,13 @@ class Receiver(QWidget):
                 spacer = QProgressBar()
                 spacer.coord = 8
                 spacer.setMaximum(10)
-                if i < 6:
+                spacer.set_format("")
+                if i < 10:
                     spacer.setStyleSheet("background-color:green;")
-                self.layout.add_widget(spacer, i, 4)
+                    self.layout.add_widget(spacer, i, 6)
 
-                self.spacers.append(spacer)
-            if i < 6:
+                    self.spacers.append(spacer)
+            if i < 10:
                 nameButton = QPushButton("+")
                 nameButton.position = i
                 nameButton.clicked.connect(self.surface)
@@ -416,8 +417,8 @@ class Receiver(QWidget):
                 nameButton = QPushButton("NAME")
             #nameButton.clicked.connect(self.name_detail)
             nameButton.setStyleSheet("color:aqua;")
-            self.layout.add_widget(nameButton, i, 1)
-            if i < 6:
+            self.layout.add_widget(nameButton, i, 4)
+            if i < 10:
                 button = QPushButton("-")
                 button.position = i
                 button.clicked.connect(self.dig)
@@ -427,7 +428,7 @@ class Receiver(QWidget):
             button.setStyleSheet("color:red;")
             #self.position = i
             button.position = i
-            self.layout.add_widget(button, i, 2)
+            self.layout.add_widget(button, i, 5)
             if i < 6:
                 head = QPushButton("HEAD")
                 head.setStyleSheet("background-color:orange;")
