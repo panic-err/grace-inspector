@@ -195,7 +195,7 @@ class InputBox(QWidget):
             self.layout.add_widget(send, i, 3)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
-            self.setStyleSheet("background-color:#16394f;")
+            self.setStyleSheet("background-color:#b767bc;")
             self.nameDetail = QDialog()
             self.nameDetailLayout = QVBoxLayout(self.nameDetail)
             nameDetail = "Details"
@@ -407,7 +407,7 @@ class Receiver(QWidget):
                 spacer.setMaximum(10)
                 spacer.set_format("")
                 if i < 10:
-                    spacer.setStyleSheet("background-color:green;")
+                    spacer.setStyleSheet("background-color:#bc6797;")
                     self.layout.add_widget(spacer, i, 6)
 
                     self.spacers.append(spacer)
@@ -451,7 +451,7 @@ class Receiver(QWidget):
                 #self.layout.add_widget(send, i, 3)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
-            self.setStyleSheet("background-color:#16394f;")
+            self.setStyleSheet("background-color:#bc6797;")
             self.nameDetail = QDialog()
             self.nameDetailLayout = QVBoxLayout(self.nameDetail)
             nameDetail = "Details"
@@ -624,7 +624,7 @@ class RocketWrite(QWidget):
             self.layout.add_widget(send, i, 3)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
-            self.setStyleSheet("background-color:#16394f;")
+            self.setStyleSheet("background-color:#bc6797;")
             self.nameDetail = QDialog()
             self.nameDetailLayout = QVBoxLayout(self.nameDetail)
             nameDetail = "Details"
