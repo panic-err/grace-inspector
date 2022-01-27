@@ -400,7 +400,7 @@ class Receiver(QWidget):
             #mess.returnPressed.connect(self.greet)
             self.greeters.append(mess)
             mess.setStyleSheet("color:aqua;")
-            self.layout.add_widget(mess, i, 0)
+            self.layout.add_widget(mess, i, 0, 2, 1)
             if mess.coord < 10:
                 spacer = QProgressBar()
                 spacer.coord = 8
@@ -441,13 +441,14 @@ class Receiver(QWidget):
                 self.senders.append(head)
                 self.layout.add_widget(head, i, 3)
             else:
+                print("And a small green alien that only homer can see")
                 send = QPushButton("SEND")
                 send.setStyleSheet("color:aqua;")
                 send.position = i
                 #send.clicked.connect(self.greetNoColour)
                 #button.clicked.connect(self.greet)
                 self.senders.append(send)
-                self.layout.add_widget(send, i, 3)
+                #self.layout.add_widget(send, i, 3)
             #button.object_name = "butt"+str(i)
             self.buttons.append(button)
             self.setStyleSheet("background-color:#16394f;")
@@ -710,19 +711,19 @@ class RocketWrite(QWidget):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 6 :
+    if len(sys.argv) != 4 :
         print("Usage is python main.py <username> <password> <url of rabbitmq server> <db name> <db user>")
         sys.exit()
 
 
     #create the database Connection
-    conn = psycopg2.connect("dbname="+sys.argv[4]+" user="+sys.argv[5])
-    cur = conn.cursor()
+    #conn = psycopg2.connect("dbname="+sys.argv[4]+" user="+sys.argv[5])
+    #cur = conn.cursor()
 
-    cur.execute("SELECT * FROM threads")
+    #cur.execute("SELECT * FROM threads")
 
-    records = cur.fetchall()
-    print(records)
+    #records = cur.fetchall()
+    #print(records)
 
     app = QApplication([])
 
