@@ -113,7 +113,7 @@ class InputBox(QWidget):
         self.calc_blue()
         message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+str(pos+1)+":"+str(self.greeters[pos].text())
         #self.greeters[pos].text = self.greeters[pos].text
-        self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
+        #self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
 
@@ -542,7 +542,7 @@ class RocketWrite(QWidget):
         self.calc_blue()
         message = "PACKAGE:"+self.red+":"+self.green+":"+self.blue+":"+str(pos+1)+":"+str(self.greeters[pos].text())
         #self.greeters[pos].text = self.greeters[pos].text
-        self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
+        #self.greeters[pos].setStyleSheet("QLineEdit {color: rgb("+str(self.calc_red())+", "+str(self.calc_blue())+", "+str(self.calc_green())+");}")
         self.channel.basic_publish(exchange='topicex', routing_key="trout", body=message)
         print("[x] Sent %r:%r" %("trout", message) )
 
